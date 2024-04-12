@@ -1,13 +1,19 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Store } from '@ngrx/store';
+import { register } from '../../store/actions';
+import { RegisterRequestInterface } from '../../types/registerRequest.interface';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'mc-register',
   templateUrl: './register.component.html',
   standalone: true,
-  imports: [ReactiveFormsModule]
+  imports: [ReactiveFormsModule, RouterLink]
 })
 export class RegisterComponent  {
+  protected store = inject(Store);
+  
   registerForm: FormGroup = new FormGroup({
     username: new FormControl<string | null>(
       null,
@@ -23,7 +29,12 @@ export class RegisterComponent  {
   });
 
   onSubmit(): void {
-    console.log(this.registerForm.value, 'value');
-  }
+    const registerRequest: RegisterRequestInterface = {
+      user: this.registerForm.getRawValue()
+    }
 
+    console.log(registerRequest);
+
+    this.store.dispatch(register({registerRequest}))
+  }
 }
