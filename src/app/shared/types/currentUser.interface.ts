@@ -3,5 +3,7 @@ export interface CurrentUserInterface {
     token: string,
     username: string,
     bio: string | null,
-    image: string | null
+    image: string | null,
+    createdAt: string | null,
+    updatedAt: string | null
 }

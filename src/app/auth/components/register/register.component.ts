@@ -1,19 +1,24 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { register } from '../../store/actions';
+import { authActions } from '../../store/actions';
 import { RegisterRequestInterface } from '../../types/registerRequest.interface';
 import { RouterLink } from '@angular/router';
+import { selectIsSubmitting } from '../../store/reducer';
+import { AuthStateInterface } from '../../types/authState.interface';
+import { CommonModule } from '@angular/common';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'mc-register',
   templateUrl: './register.component.html',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink]
+  imports: [ReactiveFormsModule, RouterLink, CommonModule]
 })
 export class RegisterComponent  {
-  protected store = inject(Store);
-  
+  protected store = inject(Store<{state: AuthStateInterface}>);
+  isSubmitting$ = this.store.select(selectIsSubmitting);
+
   registerForm: FormGroup = new FormGroup({
     username: new FormControl<string | null>(
       null,
@@ -29,12 +34,9 @@ export class RegisterComponent  {
   });
 
   onSubmit(): void {
-    const registerRequest: RegisterRequestInterface = {
+    const request: RegisterRequestInterface = {
       user: this.registerForm.getRawValue()
     }
-
-    console.log(registerRequest);
-
-    this.store.dispatch(register({registerRequest}))
+    this.store.dispatch(authActions.register({request}))
   }
 }
