@@ -1,12 +1,12 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { authActions } from '../../store/actions';
-import { RegisterRequestInterface } from '../../types/registerRequest.interface';
-import { RouterLink } from '@angular/router';
 import { selectIsSubmitting, selectValidationErrors } from '../../store/reducer';
 import { AuthStateInterface } from '../../types/authState.interface';
-import { CommonModule } from '@angular/common';
+import { RegisterRequestInterface } from '../../types/registerRequest.interface';
 
 import { combineLatest } from 'rxjs';
 import { BackendErrorMessagesComponent } from 'src/app/shared/components/backend-error-messages/backend-error-messages.component';
