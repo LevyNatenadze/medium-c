@@ -20,13 +20,38 @@ export const registerEffects = createEffect(
         switchMap(({request}) => {
             return authService.register(request).pipe(
                 map((currentUser: CurrentUserInterface) => {
-                    localStorageService.set('access token', currentUser.token)
+                    localStorageService.set('accessToken', currentUser.token)
                     return authActions.registerSuccess({currentUser});
                 }),
                 catchError((errorResponse: HttpErrorResponse) => {
                    return of(authActions.registerFailure({
                     errors: errorResponse.error.errors
                    }))
+                })
+            )
+        })
+    )
+}, {functional: true});
+
+export const getCurrentUserEffects = createEffect(
+    (
+        actions$ = inject(Actions), 
+        authService = inject(AuthService),
+        localStorageService = inject(LocalStorageService)
+    ) => {
+    return actions$.pipe(
+        ofType(authActions.getCurrentUser),
+        switchMap(() => {
+            const token = localStorageService.get('accessToken');
+            if(!token) {
+                return of(authActions.getCurrentUserFailure());
+            }
+            return authService.getCurrentUser().pipe(
+                map((currentUser: CurrentUserInterface) => {
+                    return authActions.getCurrentUserSuccess({currentUser});
+                }),
+                catchError(() => {
+                   return of(authActions.getCurrentUserFailure())
                 })
             )
         })
@@ -56,7 +81,7 @@ export const loginEffects = createEffect(
         switchMap(({request}) => {
             return authService.login(request).pipe(
                 map((currentUser: CurrentUserInterface) => {
-                    localStorageService.set('access token', currentUser.token)
+                    localStorageService.set('accessToken', currentUser.token)
                     return authActions.loginSuccess({currentUser});
                 }),
                 catchError((errorResponse: HttpErrorResponse) => {
